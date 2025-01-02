@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Teacher</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        #response { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>AI-Powered Teacher</h1>
+    <textarea id="userInput" rows="5" style="width: 100%;" placeholder="Type your question here..."></textarea>
+    <button onclick="sendQuestion()">Ask</button>
+    <div id="response"></div>
+
+    <script>
+        async function sendQuestion() {
+            const userInput = document.getElementById("userInput").value;
+            if (!userInput) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            const responseDiv = document.getElementById("response");
+            responseDiv.textContent = "Thinking...";
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_input: userInput })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    responseDiv.textContent = `Error: ${data.error}`;
+                } else {
+                    responseDiv.textContent = `Teacher: ${data.response}`;
+                }
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
